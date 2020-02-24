@@ -6,7 +6,6 @@ import common.types.ErrorResponse;
 import common.types.ValidationErrorResponse;
 import common.util.UtilJson;
 import common.validation.ValidationError;
-//import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -34,6 +33,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+//import org.apache.log4j.Logger;
 
 public abstract class ServerResponseExceptionHandler extends ResponseEntityExceptionHandler {
     //private final Logger logger = Logger.getLogger(this.getClass());
