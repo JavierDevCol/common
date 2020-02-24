@@ -34,10 +34,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-//import org.apache.log4j.Logger;
+import org.apache.log4j.Logger;
 
 public abstract class ServerResponseExceptionHandler extends ResponseEntityExceptionHandler {
-    //private final Logger logger = Logger.getLogger(this.getClass());
+    private final Logger logger = Logger.getLogger(this.getClass());
     @Autowired
     private MessageSource messageSource;
 
@@ -121,7 +121,7 @@ public abstract class ServerResponseExceptionHandler extends ResponseEntityExcep
 
     protected ResponseEntity<Object> handleNotFoundObjectFailure(NotFoundObjectException ex, WebRequest request) {
         String message = this.messageSource.getMessage(
-                "polaris.commons.not.found.object", new Object[]{ex.getObjectId()}, LocaleContextHolder.getLocale());
+                "polaris.cloud.commons.not.found.object", new Object[]{ex.getObjectId()}, LocaleContextHolder.getLocale());
         ErrorResponse error = Responses.error(HttpStatus.NOT_FOUND, message);
         return this.handleExceptionInternal(ex, error, new HttpHeaders(), error.getStatus(), request);
     }
@@ -137,7 +137,7 @@ public abstract class ServerResponseExceptionHandler extends ResponseEntityExcep
         }
         else {
             String message = this.messageSource.getMessage(
-                    "polaris.commons.error.unexpected", (Object[]) null, LocaleContextHolder.getLocale());
+                    "polaris.cloud.commons.error.unexpected", (Object[]) null, LocaleContextHolder.getLocale());
             ErrorResponse error = Responses.error(HttpStatus.BAD_REQUEST, message, ex);
             return this.handleExceptionInternal(ex, error, new HttpHeaders(), error.getStatus(), request);
         }
@@ -145,16 +145,16 @@ public abstract class ServerResponseExceptionHandler extends ResponseEntityExcep
 
     protected ResponseEntity<Object> handleConverterNotFoundFailure(ConverterNotFoundException ex, WebRequest request) {
         String message = this.messageSource.getMessage(
-                "polaris.commons.error.converter.not-found", (Object[]) null, LocaleContextHolder.getLocale());
+                "polaris.cloud.commons.error.converter.not-found", (Object[]) null, LocaleContextHolder.getLocale());
         ErrorResponse error = Responses.error(HttpStatus.INTERNAL_SERVER_ERROR, message, ex);
         return this.handleExceptionInternal(ex, error, new HttpHeaders(), error.getStatus(), request);
     }
 
     protected ResponseEntity<Object> handleInvalidEnumValueFailure(InvalidEnumValueException ex, WebRequest request) {
         String message = this.messageSource.getMessage(
-                "polaris.commons.validation.enum.invalid", new Object[]{ex.getValue()}, LocaleContextHolder.getLocale());
+                "polaris.cloud.commons.validation.enum.invalid", new Object[]{ex.getValue()}, LocaleContextHolder.getLocale());
         String msg = this.messageSource.getMessage(
-                "polaris.commons.validation.message.default", (Object[]) null, LocaleContextHolder.getLocale());
+                "polaris.cloud.commons.validation.message.default", (Object[]) null, LocaleContextHolder.getLocale());
         ValidationError error = new ValidationError(ex.getField(), message);
         ValidationErrorResponse response = Responses.validation(error, msg);
         return this.handleExceptionInternal(ex, response, new HttpHeaders(), response.getStatus(), request);
@@ -162,14 +162,14 @@ public abstract class ServerResponseExceptionHandler extends ResponseEntityExcep
 
     protected ResponseEntity<Object> handleValidationFailure(ValidationException ex, WebRequest request) {
         String message = this.messageSource.getMessage(
-                "polaris.commons.validation.message.default", (Object[]) null, LocaleContextHolder.getLocale());
+                "polaris.cloud.commons.validation.message.default", (Object[]) null, LocaleContextHolder.getLocale());
         ValidationErrorResponse response = Responses.validation(ex.getErrors(), message);
         return this.handleExceptionInternal(ex, response, new HttpHeaders(), response.getStatus(), request);
     }
 
     protected ResponseEntity<Object> handleMiscFailures(Exception ex, WebRequest request) {
         String message = this.messageSource.getMessage(
-                "polaris.commons.error.unexpected", (Object[]) null, LocaleContextHolder.getLocale());
+                "polaris.cloud.commons.error.unexpected", (Object[]) null, LocaleContextHolder.getLocale());
         ErrorResponse error = Responses.error(HttpStatus.BAD_REQUEST, message, ex);
         return this.handleExceptionInternal(ex, error, new HttpHeaders(), error.getStatus(), request);
     }
@@ -195,7 +195,7 @@ public abstract class ServerResponseExceptionHandler extends ResponseEntityExcep
         }
 
         String message = this.messageSource.getMessage(
-                "polaris.commons.validation.message.default", (Object[]) null, LocaleContextHolder.getLocale());
+                "polaris.cloud.commons.validation.message.default", (Object[]) null, LocaleContextHolder.getLocale());
         return this.handleExceptionInternal(ex, Responses.validation(errors, message), headers, status, request);
     }
 
@@ -206,7 +206,7 @@ public abstract class ServerResponseExceptionHandler extends ResponseEntityExcep
         }
         else {
             String message = this.messageSource.getMessage(
-                    "polaris.commons.validation.json.invalid", (Object[]) null, LocaleContextHolder.getLocale());
+                    "polaris.cloud.commons.validation.json.invalid", (Object[]) null, LocaleContextHolder.getLocale());
             ErrorResponse error = Responses.error(HttpStatus.BAD_REQUEST, message);
             return this.handleExceptionInternal(ex, error, new HttpHeaders(), error.getStatus(), request);
         }
