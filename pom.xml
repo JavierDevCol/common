@@ -30,6 +30,9 @@
         <myMavenRepoWriteUrl>https://mymavenrepo.com/repo/GK8d2t0f0iXTbdWBN5oD/</myMavenRepoWriteUrl>
         <myMavenRepoReadUrl>https://mymavenrepo.com/repo/8wOjWbPUscy5S8AAeTDp/</myMavenRepoReadUrl>
         <converage.test>0.0</converage.test>
+        <sonar.credenciales.url>http://qa.wposs.com:8081</sonar.credenciales.url>
+        <sonar.credenciales.user>gestionti</sonar.credenciales.user>
+        <sonar.credenciales.password>Wposs.2020</sonar.credenciales.password>
     </properties>
 
     <repositories>
@@ -50,6 +53,33 @@
             <url>${myMavenRepoWriteUrl}</url>
         </snapshotRepository>
     </distributionManagement>
+
+    <profiles>
+        <profile>
+            <id>sonar</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <sonar.host.url>${sonar.credenciales.url}</sonar.host.url>
+                <sonar.login>${sonar.credenciales.user}</sonar.login>
+                <sonar.password>${sonar.credenciales.password}</sonar.password>
+            </properties>
+        </profile>
+    </profiles>
+
+    <dependencies>
+        <!-- Polaris -->
+
+        <!-- Sonar -->
+        <dependency>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>sonar-maven-plugin</artifactId>
+            <version>3.4.0.905</version>
+            <type>pom</type>
+            <scope>install</scope>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
