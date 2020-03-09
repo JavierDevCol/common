@@ -1,8 +1,8 @@
 package common.filter;
 
 public abstract class Filter {
-    private Integer pageNumber;
-    private Integer pageSize;
+    private Integer pageNumber = -1;
+    private Integer pageSize = -1;
 
     public Filter() {
     }

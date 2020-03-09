@@ -27,9 +27,9 @@
         <swagger.version>2.9.2</swagger.version>
         <log4j.version>1.2.17</log4j.version>
         <jaxb.version>2.2.11</jaxb.version>
+        <converage.test>0.0</converage.test>
         <myMavenRepoWriteUrl>https://mymavenrepo.com/repo/GK8d2t0f0iXTbdWBN5oD/</myMavenRepoWriteUrl>
         <myMavenRepoReadUrl>https://mymavenrepo.com/repo/8wOjWbPUscy5S8AAeTDp/</myMavenRepoReadUrl>
-        <converage.test>0.0</converage.test>
         <sonar.credenciales.url>http://qa.wposs.com:8081</sonar.credenciales.url>
         <sonar.credenciales.user>gestionti</sonar.credenciales.user>
         <sonar.credenciales.password>Wposs.2020</sonar.credenciales.password>
