@@ -51,7 +51,9 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
     public ID insert(D domainBean) {
         this.validationService.validate(domainBean, Insert.class);
         E entity = (E) this.converterService.convertTo(domainBean, this.entityClass);
-        entity.setId((ID) UUID.randomUUID());
+        if (domainBean.getId() == null) {
+            entity.setId((ID) UUID.randomUUID());
+        }
         this.getDao().save(entity);
         return entity.getId();
     }

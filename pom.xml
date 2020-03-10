@@ -28,8 +28,8 @@
         <log4j.version>1.2.17</log4j.version>
         <jaxb.version>2.2.11</jaxb.version>
         <converage.test>0.0</converage.test>
-        <myMavenRepoWriteUrl>https://mymavenrepo.com/repo/GK8d2t0f0iXTbdWBN5oD/</myMavenRepoWriteUrl>
-        <myMavenRepoReadUrl>https://mymavenrepo.com/repo/8wOjWbPUscy5S8AAeTDp/</myMavenRepoReadUrl>
+        <myMavenRepoWriteUrl>https://mymavenrepo.com/repo/XIgZfXchIN1A8eqoPGFw/</myMavenRepoWriteUrl>
+        <myMavenRepoReadUrl>https://mymavenrepo.com/repo/GZmlT6U8w1tz7XLji6X9/</myMavenRepoReadUrl>
         <sonar.credenciales.url>http://qa.wposs.com:8081</sonar.credenciales.url>
         <sonar.credenciales.user>gestionti</sonar.credenciales.user>
         <sonar.credenciales.password>Wposs.2020</sonar.credenciales.password>
@@ -37,19 +37,19 @@
 
     <repositories>
         <repository>
-            <id>polaris_cloud</id>
+            <id>myMavenRepo.read</id>
             <url>${myMavenRepoReadUrl}</url>
         </repository>
     </repositories>
 
     <distributionManagement>
         <repository>
-            <id>polaris_cloud</id>
+            <id>myMavenRepo.write</id>
             <url>${myMavenRepoWriteUrl}</url>
         </repository>
 
         <snapshotRepository>
-            <id>polaris_cloud</id>
+            <id>myMavenRepo.write</id>
             <url>${myMavenRepoWriteUrl}</url>
         </snapshotRepository>
     </distributionManagement>
