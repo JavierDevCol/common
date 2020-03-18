@@ -22,12 +22,14 @@ import java.util.Optional;
 import java.util.UUID;
 
 public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>, ID extends Serializable> implements Service<D, ID> {
+
     @Autowired
     private ConverterService converterService;
     @Autowired
     private ValidationService validationService;
     private Class<E> entityClass = (Class) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[1];
     private Class<D> domainClass = (Class) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+    private Class<ID> typeId = (Class) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[2];
 
     public ServiceImpl() {
     }
@@ -52,7 +54,9 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
         this.validationService.validate(domainBean, Insert.class);
         E entity = (E) this.converterService.convertTo(domainBean, this.entityClass);
         if (domainBean.getId() == null) {
-            entity.setId((ID) UUID.randomUUID());
+            if (typeId.getSimpleName().equals(UUID.class.getSimpleName())) {
+                entity.setId((ID) UUID.randomUUID());
+            }
         }
         this.getDao().save(entity);
         return entity.getId();
