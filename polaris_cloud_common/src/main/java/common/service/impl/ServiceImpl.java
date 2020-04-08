@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static common.util.UtilJavaReflection.pasarEntityToMaps;
+
 public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>, ID extends Serializable> implements Service<D, ID> {
 
     @Autowired
@@ -58,6 +60,8 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
                 entity.setId((ID) UUID.randomUUID());
             }
         }
+
+        pasarEntityToMaps(entity);
         this.getDao().save(entity);
         return entity.getId();
     }
@@ -68,6 +72,7 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
     public void update(D domainBean) {
         this.validationService.validate(domainBean, Update.class);
         E entity = (E) this.converterService.convertTo(domainBean, this.entityClass);
+        pasarEntityToMaps(entity);
         this.getDao().save(entity);
     }
 
@@ -78,6 +83,7 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
         domainBean.setId(id);
         this.validationService.validate(domainBean, Update.class);
         E entity = (E) this.converterService.convertTo(domainBean, this.entityClass);
+        pasarEntityToMaps(entity);
         this.getDao().save(entity);
     }
 
