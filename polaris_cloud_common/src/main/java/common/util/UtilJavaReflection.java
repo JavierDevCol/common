@@ -160,6 +160,9 @@ public final class UtilJavaReflection {
     }
 
     public static void pasarEntityToMaps(Entity source) {
+        if (source == null) {
+            return;
+        }
         List<Field> campos = camposConAnotacion(source, ToMap.class);
         campos.forEach(field -> {
             ToMap anotacion = field.getAnnotation(ToMap.class);

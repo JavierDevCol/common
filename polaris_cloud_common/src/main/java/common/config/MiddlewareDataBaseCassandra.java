@@ -31,17 +31,21 @@ public class MiddlewareDataBaseCassandra extends AbstractCassandraEventListener<
                 Object valorField = getValueField(event.getSource(), field);
                 if (field.getType().equals(List.class)) {
                     Collection<MapEmbebido> lista = (Collection) valorField;
-                    List listResponse = lista
-                            .stream()
-                            .map(mapa -> toEntity(mapa.getMapa(), anotacion.claseConvertir()))
-                            .collect(Collectors.toList());
-                    setValueField(event.getSource(), nombreAttributo, listResponse, List.class);
+                    if (lista != null) {
+                        List listResponse = lista
+                                .stream()
+                                .map(mapa -> toEntity(mapa.getMapa(), anotacion.claseConvertir()))
+                                .collect(Collectors.toList());
+                        setValueField(event.getSource(), nombreAttributo, listResponse, List.class);
+                    }
                 }
                 else {
                     MapEmbebido mapEmbebido = (MapEmbebido) valorField;
-                    Map<String, String> mapa = mapEmbebido.getMapa();
-                    Object value = toEntity(mapa, anotacion.claseConvertir());
-                    setValueField(event.getSource(), nombreAttributo, value);
+                    if (mapEmbebido != null) {
+                        Map<String, String> mapa = mapEmbebido.getMapa();
+                        Object value = toEntity(mapa, anotacion.claseConvertir());
+                        setValueField(event.getSource(), nombreAttributo, value);
+                    }
                 }
             }
         });
