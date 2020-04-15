@@ -10,6 +10,7 @@ import common.types.MapEmbebido;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -223,7 +224,14 @@ public final class UtilJavaReflection {
         Map<String, Class> mapaResponse = new HashMap<>();
         if (clasePadre != null) {
             for (Field declaredField : clasePadre.getDeclaredFields()) {
-                mapaResponse.put(declaredField.getName(), declaredField.getType());
+                if (!declaredField.getType().equals(List.class)) {
+                    mapaResponse.put(declaredField.getName(), declaredField.getType());
+                }
+                else {
+                    ParameterizedType parameterizedType = (ParameterizedType) declaredField.getGenericType();
+                    Class tipoDatoPrimero = (Class) parameterizedType.getActualTypeArguments()[0];
+                    mapaResponse.put(declaredField.getName(), tipoDatoPrimero);
+                }
             }
         }
         return mapaResponse;

@@ -5,10 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import common.annotation.ToEntity;
 import common.types.Entity;
 import common.types.MapEmbebido;
+import common.util.Constants;
 import org.springframework.data.cassandra.core.mapping.event.AbstractCassandraEventListener;
 import org.springframework.data.cassandra.core.mapping.event.AfterConvertEvent;
 
 import java.lang.reflect.Field;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -82,7 +85,14 @@ public class MiddlewareDataBaseCassandra extends AbstractCassandraEventListener<
                         valor = listaResponse;
                     }
                     catch (JsonProcessingException ex) {
-                        valor = valorAttributo;
+                        try {
+                            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(Constants.FORMAT_DATE);
+                            LocalDate fecha = LocalDate.parse(valorAttributo.toString(), dateTimeFormatter);
+                            valor = null;
+                        }
+                        catch (Exception ef) {
+                            valor = valorAttributo;
+                        }
                     }
                 }
             }
