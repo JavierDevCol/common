@@ -70,7 +70,6 @@ public class MiddlewareDataBaseCassandra extends AbstractCassandraEventListener<
                     }
                 }
                 catch (JsonProcessingException e) {
-                    e.printStackTrace();
                     valor = valorAttributo;
                 }
             }
