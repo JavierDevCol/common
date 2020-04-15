@@ -218,4 +218,15 @@ public final class UtilJavaReflection {
         }
         return mapaResponse;
     }
+
+    public static Map<String, Class> findTypeDataVariablesByClase(Class clasePadre) {
+        Map<String, Class> mapaResponse = new HashMap<>();
+        if (clasePadre != null) {
+            for (Field declaredField : clasePadre.getDeclaredFields()) {
+                mapaResponse.put(declaredField.getName(), declaredField.getType());
+            }
+        }
+        return mapaResponse;
+    }
+
 }

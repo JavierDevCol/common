@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import common.annotation.ToEntity;
 import common.types.Entity;
 import common.types.MapEmbebido;
-import common.util.UtilJson;
 import org.springframework.data.cassandra.core.mapping.event.AbstractCassandraEventListener;
 import org.springframework.data.cassandra.core.mapping.event.AfterConvertEvent;
 
@@ -17,6 +16,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static common.util.UtilJavaReflection.camposConAnotacion;
+import static common.util.UtilJavaReflection.findTypeDataVariablesByClase;
 import static common.util.UtilJavaReflection.getValueField;
 import static common.util.UtilJavaReflection.setValueField;
 
@@ -52,24 +52,31 @@ public class MiddlewareDataBaseCassandra extends AbstractCassandraEventListener<
         super.onAfterConvert(event);
     }
 
-    private Object toEntity(Map<String, String> map, Class<?> clase) {
-        ObjectMapper objectMapper = new ObjectMapper();
+    private Object toEntity(Map map, Class<?> clase) {
         Map<String, Object> mapaResponse = new HashMap<>();
+        if (map == null || clase == null) {
+            return null;
+        }
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, Class> tipoDatoVariables = findTypeDataVariablesByClase(clase);
         map.forEach((nombreAttributo, valorAttributo) -> {
             Object valor = null;
-            if (valorAttributo != null && !valorAttributo.equals("null")) {
-                valor = valorAttributo;
+            if (valorAttributo != null) {
+                try {
+                    Map mapaValorAttributo = objectMapper.readValue(valorAttributo.toString(), HashMap.class);
+                    Class tipoDatoVariable = tipoDatoVariables.get(nombreAttributo);
+                    if (tipoDatoVariable != null) {
+                        valor = toEntity(mapaValorAttributo, tipoDatoVariable);
+                    }
+                }
+                catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                    valor = valorAttributo;
+                }
             }
-            mapaResponse.put(nombreAttributo, valor);
+            mapaResponse.put(nombreAttributo.toString(), valor);
         });
-        String json = null;
-        try {
-            json = objectMapper.writeValueAsString(mapaResponse);
-        }
-        catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return UtilJson.toObject(json, clase);
+        return objectMapper.convertValue(mapaResponse, clase);
     }
 
 }
