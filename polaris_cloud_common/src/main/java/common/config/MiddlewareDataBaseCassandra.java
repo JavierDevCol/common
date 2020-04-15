@@ -9,6 +9,7 @@ import org.springframework.data.cassandra.core.mapping.event.AbstractCassandraEv
 import org.springframework.data.cassandra.core.mapping.event.AfterConvertEvent;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -61,16 +62,28 @@ public class MiddlewareDataBaseCassandra extends AbstractCassandraEventListener<
         Map<String, Class> tipoDatoVariables = findTypeDataVariablesByClase(clase);
         map.forEach((nombreAttributo, valorAttributo) -> {
             Object valor = null;
-            if (valorAttributo != null) {
+            if (valorAttributo != null && !valorAttributo.toString().equals("null")) {
                 try {
                     Map mapaValorAttributo = objectMapper.readValue(valorAttributo.toString(), HashMap.class);
                     Class tipoDatoVariable = tipoDatoVariables.get(nombreAttributo);
-                    if (tipoDatoVariable != null) {
+                    if (tipoDatoVariable != null && mapaValorAttributo != null) {
                         valor = toEntity(mapaValorAttributo, tipoDatoVariable);
                     }
                 }
                 catch (JsonProcessingException e) {
-                    valor = valorAttributo;
+                    List listarValores = null;
+                    List listaResponse = new ArrayList();
+                    try {
+                        listarValores = objectMapper.readValue(valorAttributo.toString(), List.class);
+                        Class tipoDatoVariable = tipoDatoVariables.get(nombreAttributo);
+                        if (tipoDatoVariable != null && listarValores != null) {
+                            listarValores.forEach(o -> listaResponse.add(toEntity((Map) o, tipoDatoVariable)));
+                        }
+                        valor = listaResponse;
+                    }
+                    catch (JsonProcessingException ex) {
+                        valor = valorAttributo;
+                    }
                 }
             }
             mapaResponse.put(nombreAttributo.toString(), valor);

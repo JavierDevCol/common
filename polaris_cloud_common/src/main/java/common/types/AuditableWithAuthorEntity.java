@@ -1,5 +1,7 @@
 package common.types;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -69,5 +71,17 @@ public abstract class AuditableWithAuthorEntity<ID extends Serializable> extends
     public interface Attributes extends AuditableEntity.Attributes {
         String CREATED_BY = "createdBy";
         String UPDATED_BY = "updatedBy";
+    }
+
+    @Override
+    public String toString() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.writeValueAsString(this);
+        }
+        catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return super.toString();
     }
 }
