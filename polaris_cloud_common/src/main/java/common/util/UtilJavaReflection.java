@@ -1,5 +1,7 @@
 package common.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import common.annotation.Atributo;
 import common.annotation.Tabla;
 import common.annotation.ToMap;
@@ -198,7 +200,15 @@ public final class UtilJavaReflection {
         for (Field declaredField : instanciaClase.getDeclaredFields()) {
             String nombreVariable = declaredField.getName();
             Object valorObject = getValueField(entity, declaredField);
-
+            if (declaredField.getType().equals(List.class)) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                try {
+                    valorObject = objectMapper.writeValueAsString(objectMapper);
+                }
+                catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
+            }
             mapaResponse.put(nombreVariable, String.valueOf(valorObject));
         }
         Map<String, String> mapaPadre = entityToMap(instanciaClase.getSuperclass(), entity);
@@ -224,13 +234,13 @@ public final class UtilJavaReflection {
         Map<String, Class> mapaResponse = new HashMap<>();
         if (clasePadre != null) {
             for (Field declaredField : clasePadre.getDeclaredFields()) {
-                if (!declaredField.getType().equals(List.class)) {
-                    mapaResponse.put(declaredField.getName(), declaredField.getType());
-                }
-                else {
+                if (declaredField.getType().equals(List.class)) {
                     ParameterizedType parameterizedType = (ParameterizedType) declaredField.getGenericType();
                     Class tipoDatoPrimero = (Class) parameterizedType.getActualTypeArguments()[0];
                     mapaResponse.put(declaredField.getName(), tipoDatoPrimero);
+                }
+                else {
+                    mapaResponse.put(declaredField.getName(), declaredField.getType());
                 }
             }
         }
