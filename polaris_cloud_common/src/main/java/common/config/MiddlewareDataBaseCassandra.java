@@ -98,7 +98,14 @@ public class MiddlewareDataBaseCassandra extends AbstractCassandraEventListener<
                                 valor = null;
                             }
                             catch (Exception efg) {
-                                valor = valorAttributo;
+                                try {
+                                    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(Constants.FORMAT_DATE_TIME);
+                                    LocalTime tiempo = LocalTime.parse(valorAttributo.toString(), dateTimeFormatter);
+                                    valor = null;
+                                }
+                                catch (Exception efgj) {
+                                    valor = valorAttributo;
+                                }
                             }
                         }
                     }
