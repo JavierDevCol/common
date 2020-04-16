@@ -11,6 +11,7 @@ import org.springframework.data.cassandra.core.mapping.event.AfterConvertEvent;
 
 import java.lang.reflect.Field;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -91,7 +92,14 @@ public class MiddlewareDataBaseCassandra extends AbstractCassandraEventListener<
                             valor = null;
                         }
                         catch (Exception ef) {
-                            valor = valorAttributo;
+                            try {
+                                DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(Constants.FORMAT_TIME);
+                                LocalTime tiempo = LocalTime.parse(valorAttributo.toString(), dateTimeFormatter);
+                                valor = null;
+                            }
+                            catch (Exception efg) {
+                                valor = valorAttributo;
+                            }
                         }
                     }
                 }
