@@ -203,7 +203,7 @@ public final class UtilJavaReflection {
             if (declaredField.getType().equals(List.class)) {
                 ObjectMapper objectMapper = new ObjectMapper();
                 try {
-                    valorObject = objectMapper.writeValueAsString(objectMapper);
+                    valorObject = objectMapper.writeValueAsString(valorObject);
                 }
                 catch (JsonProcessingException e) {
                     e.printStackTrace();
