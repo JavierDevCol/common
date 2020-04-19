@@ -247,4 +247,14 @@ public final class UtilJavaReflection {
         return mapaResponse;
     }
 
+    public static boolean findClassInterface(Class padre, Class claseInterface) {
+        if (padre != null && claseInterface != null) {
+            Class clasePadreResponse = padre.getSuperclass();
+            if (clasePadreResponse.equals(claseInterface)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

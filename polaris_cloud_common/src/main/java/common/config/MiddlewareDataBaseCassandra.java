@@ -3,6 +3,7 @@ package common.config;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import common.annotation.ToEntity;
+import common.types.AuditableWithAuthorEntity;
 import common.types.Entity;
 import common.types.MapEmbebido;
 import common.util.Constants;
@@ -21,6 +22,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static common.util.UtilJavaReflection.camposConAnotacion;
+import static common.util.UtilJavaReflection.findClassInterface;
 import static common.util.UtilJavaReflection.findTypeDataVariablesByClase;
 import static common.util.UtilJavaReflection.getValueField;
 import static common.util.UtilJavaReflection.setValueField;
@@ -76,12 +78,20 @@ public class MiddlewareDataBaseCassandra extends AbstractCassandraEventListener<
                 }
                 catch (JsonProcessingException e) {
                     List listarValores = null;
-                    List listaResponse = new ArrayList();
+                    List listaResponse = null;
                     try {
                         listarValores = objectMapper.readValue(valorAttributo.toString(), List.class);
                         Class tipoDatoVariable = tipoDatoVariables.get(nombreAttributo);
-                        if (tipoDatoVariable != null && listarValores != null) {
-                            listarValores.forEach(o -> listaResponse.add(toEntity((Map) o, tipoDatoVariable)));
+                        if (tipoDatoVariable != null && listarValores != null && !listarValores.isEmpty()) {
+                            listaResponse = new ArrayList();
+                            if (findClassInterface(tipoDatoVariable, AuditableWithAuthorEntity.class)) {
+                                for (Object o : listarValores) {
+                                    listaResponse.add(toEntity((Map) o, tipoDatoVariable));
+                                }
+                            }
+                            else {
+                                listaResponse.addAll(listarValores);
+                            }
                         }
                         valor = listaResponse;
                     }
