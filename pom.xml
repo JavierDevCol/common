@@ -39,22 +39,19 @@
 
     <repositories>
         <repository>
-            <id>central</id>
-            <name>ServerJfrog-releases</name>
-            <url>http://qa.wposs.com:8082/artifactory/gradle-release</url>
+            <id>myMavenRepoRead</id>
+            <url>https://mymavenrepo.com/repo/GZmlT6U8w1tz7XLji6X9</url>
         </repository>
     </repositories>
 
     <distributionManagement>
         <repository>
-            <id>central</id>
-            <name>ServerJfrog-releases</name>
-            <url>http://qa.wposs.com:8082/artifactory/gradle-releases</url>
+            <id>myMavenRepoWrite</id>
+            <url>${myMavenRepoWriteUrl}</url>
         </repository>
         <snapshotRepository>
-            <id>snapshots</id>
-            <name>ServerJfrog-snapshots</name>
-            <url>http://qa.wposs.com:8082/artifactory/gradle-release</url>
+            <id>myMavenRepoWrite</id>
+            <url>${myMavenRepoWriteUrl}</url>
         </snapshotRepository>
     </distributionManagement>
 
