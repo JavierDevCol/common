@@ -43,7 +43,7 @@ public final class ValidationServiceImpl implements ValidationService, Initializ
             Validator<T> validator = (Validator) var5.next();
             List<ValidationError> temp = validator.validate(object);
             errors.addAll(temp);
-            if (validator.isBreakingValidation()) {
+            if (!validator.isBreakingValidation()) {
                 break;
             }
         }
