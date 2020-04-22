@@ -8,7 +8,13 @@ public interface Service<D extends DomainBean<ID>, ID> {
 
     ID insert(D var1);
 
+    List<D> insertBatch(List<D> var1);
+
     void update(D var1);
+
+    void updateBatch(List<D> var1);
+
+    List<D> updateBatchInList(List<D> var1);
 
     void update(ID id, D var1);
 

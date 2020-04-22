@@ -1,6 +1,7 @@
 package common.service.impl;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Streams;
 import common.service.ConverterService;
 import common.service.Service;
 import common.service.ValidationService;
@@ -16,10 +17,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static common.util.UtilJavaReflection.pasarEntityToMaps;
 
@@ -66,6 +69,30 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
         return entity.getId();
     }
 
+
+    @Transactional(
+            propagation = Propagation.REQUIRED
+    )
+    public List<D> insertBatch(List<D> domainBean) {
+        List<E> entities = new ArrayList<>();
+        this.validationService.validate(domainBean, Insert.class);
+        domainBean.forEach(d -> {
+            E entity = (E) this.converterService.convertTo(d, this.entityClass);
+            if (d.getId() == null) {
+                if (typeId.getSimpleName().equals(UUID.class.getSimpleName())) {
+                    entity.setId((ID) UUID.randomUUID());
+                }
+            }
+            pasarEntityToMaps(entity);
+            entities.add(entity);
+        });
+        Iterable<E> entitiesSaved = getDao().saveAll(entities);
+        return Streams
+                .stream(entitiesSaved)
+                .map(e -> getConverterService().convertTo(e, domainClass))
+                .collect(Collectors.toList());
+    }
+
     @Transactional(
             propagation = Propagation.REQUIRED
     )
@@ -74,6 +101,48 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
         E entity = (E) this.converterService.convertTo(domainBean, this.entityClass);
         pasarEntityToMaps(entity);
         this.getDao().save(entity);
+    }
+
+    @Transactional(
+            propagation = Propagation.REQUIRED
+    )
+    public void updateBatch(List<D> domainBean) {
+        List<E> entities = new ArrayList<>();
+        this.validationService.validate(domainBean, Update.class);
+        domainBean.forEach(d -> {
+            E entity = (E) this.converterService.convertTo(d, this.entityClass);
+            if (d.getId() == null) {
+                if (typeId.getSimpleName().equals(UUID.class.getSimpleName())) {
+                    entity.setId((ID) UUID.randomUUID());
+                }
+            }
+            pasarEntityToMaps(entity);
+            entities.add(entity);
+        });
+        getDao().saveAll(entities);
+    }
+
+    @Transactional(
+            propagation = Propagation.REQUIRED
+    )
+    public List<D> updateBatchInList(List<D> domainBean) {
+        List<E> entities = new ArrayList<>();
+        this.validationService.validate(domainBean, Update.class);
+        domainBean.forEach(d -> {
+            E entity = (E) this.converterService.convertTo(d, this.entityClass);
+            if (d.getId() == null) {
+                if (typeId.getSimpleName().equals(UUID.class.getSimpleName())) {
+                    entity.setId((ID) UUID.randomUUID());
+                }
+            }
+            pasarEntityToMaps(entity);
+            entities.add(entity);
+        });
+        Iterable<E> entitiesSaved = getDao().saveAll(entities);
+        return Streams
+                .stream(entitiesSaved)
+                .map(e -> converterService.convertTo(e, domainClass))
+                .collect(Collectors.toList());
     }
 
     @Transactional(

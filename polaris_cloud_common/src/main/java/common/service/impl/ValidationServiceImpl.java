@@ -34,6 +34,14 @@ public final class ValidationServiceImpl implements ValidationService, Initializ
         }
     }
 
+    public <T> void validate(List<T> object, Class<?> scope) {
+        List<ValidationError> errors = new ArrayList<>();
+        object.forEach(t -> errors.addAll(this.validateAndGet(t, scope)));
+        if (!errors.isEmpty()) {
+            throw new ValidationException(errors);
+        }
+    }
+
     public <T> List<ValidationError> validateAndGet(T object, Class<?> scope) {
         List<ValidationError> errors = new ArrayList();
         List<Validator<T>> validatorsList = this.getValidatorsOfObjectByScope(object, scope);
