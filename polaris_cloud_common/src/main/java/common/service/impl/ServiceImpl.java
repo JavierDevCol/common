@@ -73,7 +73,7 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
     @Transactional(
             propagation = Propagation.REQUIRED
     )
-    public List<D> insertBatch(List<D> domainBean) {
+    public List<D> insert(List<D> domainBean) {
         List<E> entities = new ArrayList<>();
         this.validationService.validate(domainBean, Insert.class);
         domainBean.forEach(d -> {
@@ -106,7 +106,7 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
     @Transactional(
             propagation = Propagation.REQUIRED
     )
-    public void updateBatch(List<D> domainBean) {
+    public void update(List<D> domainBean) {
         List<E> entities = new ArrayList<>();
         this.validationService.validate(domainBean, Update.class);
         domainBean.forEach(d -> {
