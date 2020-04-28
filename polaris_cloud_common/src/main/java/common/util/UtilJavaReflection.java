@@ -24,6 +24,7 @@ import static common.util.UtilFormat.cammelCase;
 public final class UtilJavaReflection {
 
     private static final String PREFIJO_METODO = "get";
+    private static final String PREFIJO_METODO_BOOLEAN = "is";
     private static final String PREFIJO_METODO_SET = "set";
 
     private UtilJavaReflection() {
@@ -41,18 +42,24 @@ public final class UtilJavaReflection {
         try {
             String nombreAttributeSinNomalizar = attribute.getName();
             String nombreNormalizado = cammelCase(nombreAttributeSinNomalizar);
-            String nombreMetodo = PREFIJO_METODO + nombreNormalizado;
+            String nombreMetodo = null;
+            if (attribute.getType().equals(boolean.class)) {
+                nombreMetodo = PREFIJO_METODO_BOOLEAN + nombreNormalizado;
+            }
+            else {
+                nombreMetodo = PREFIJO_METODO + nombreNormalizado;
+            }
             Method method = clase.getMethod(nombreMetodo);
             valor = method.invoke(objeto);
         }
         catch (IllegalAccessException e) {
-            //e.printStackTrace();
+
         }
         catch (InvocationTargetException e) {
-            //e.printStackTrace();
+
         }
         catch (NoSuchMethodException e) {
-            //e.printStackTrace();
+
         }
         return valor;
     }
