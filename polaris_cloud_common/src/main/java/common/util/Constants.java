@@ -5,6 +5,7 @@ import java.util.Locale;
 public interface Constants {
     int SCALE_BIGDECIMAL = 2;
     String FORMAT_DATE = "yyyy-MM-dd";
+    String FORMAT_DATE_POS_EMV = "yyyyMM";
     String FORMAT_DATE_TIME = "yyyy-MM-dd HH:mm:ss";
     String FORMAT_DATE_TIME_ISO = "yyyy-MM-dd'T'HH:mm:ss'Z'";
     String FORMAT_TIME = "HH:mm:ss";
