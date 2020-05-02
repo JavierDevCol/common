@@ -3,7 +3,6 @@ package common.types;
 import org.springframework.data.cassandra.core.mapping.Column;
 
 import java.io.Serializable;
-import java.util.UUID;
 
 public abstract class ClienteEntity<ID extends Serializable> extends AuditableWithAuthorEntity<ID> {
 
@@ -12,16 +11,16 @@ public abstract class ClienteEntity<ID extends Serializable> extends AuditableWi
     }
 
     @Column("cliente_id")
-    private UUID clienteId;
+    private ID clienteId;
 
     public ClienteEntity() {
     }
 
-    public UUID getClienteId() {
+    public ID getClienteId() {
         return clienteId;
     }
 
-    public void setClienteId(UUID clienteId) {
+    public void setClienteId(ID clienteId) {
         this.clienteId = clienteId;
     }
 }
