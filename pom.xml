@@ -35,23 +35,29 @@
         <sonar.credenciales.url>http://qa.wposs.com:8081</sonar.credenciales.url>
         <sonar.credenciales.user>gestionti</sonar.credenciales.user>
         <sonar.credenciales.password>Wposs.2020</sonar.credenciales.password>
+        <myMavenRepo.write.url>http://qa.wposs.com:8082/artifactory/polaris-cloud</myMavenRepo.write.url>
+        <myMavenRepo.read.url>http://qa.wposs.com:8082/artifactory/polaris-cloud</myMavenRepo.read.url>
+        <yourHttpAuthReadPassword>Wposs.2020</yourHttpAuthReadPassword>
+        <yourHttpAuthWritePassword>Wposs.2020</yourHttpAuthWritePassword>
     </properties>
 
     <repositories>
         <repository>
-            <id>myMavenRepoRead</id>
-            <url>https://mymavenrepo.com/repo/GZmlT6U8w1tz7XLji6X9</url>
+            <id>central</id>
+            <url>${myMavenRepo.read.url}</url>
         </repository>
     </repositories>
 
     <distributionManagement>
         <repository>
-            <id>myMavenRepoWrite</id>
-            <url>${myMavenRepoWriteUrl}</url>
+            <id>central</id>
+            <name>ServerJfrog-releases</name>
+            <url>${myMavenRepo.write.url}</url>
         </repository>
         <snapshotRepository>
-            <id>myMavenRepoWrite</id>
-            <url>${myMavenRepoWriteUrl}</url>
+            <id>snapshots</id>
+            <name>ServerJfrog-snapshots</name>
+            <url>${myMavenRepo.write.url}</url>
         </snapshotRepository>
     </distributionManagement>
 
