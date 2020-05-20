@@ -22,6 +22,8 @@ public interface Service<D extends DomainBean<ID>, ID> {
 
     void delete(D var1);
 
+    void deleteAllById(List<ID> ids);
+
     D findById(ID var1);
 
     <R> R findById(ID var1, Class<R> var2);

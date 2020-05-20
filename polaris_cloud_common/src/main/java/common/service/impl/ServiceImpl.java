@@ -169,6 +169,13 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
     @Transactional(
             propagation = Propagation.REQUIRED
     )
+    public void deleteAllById(List<ID> ids) {
+        ids.forEach(id -> delete(id));
+    }
+
+    @Transactional(
+            propagation = Propagation.REQUIRED
+    )
     public void delete(D object) {
         this.validationService.validate(object, Delete.class);
         //this.getDao().delete(object.getId());
