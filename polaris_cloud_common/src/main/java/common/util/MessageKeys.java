@@ -10,5 +10,6 @@ public interface MessageKeys {
     String ERROR_DB_CONSTRAINTS = "polaris.commons.error.db.constraints";
     String ERROR_UNEXPECTED = "polaris.commons.error.unexpected";
     String ERROR_CONVERTER_NOT_FOUND = "polaris.commons.error.converter.not-found";
+    String CLIENTE_ID_NOT_FOUND = "polaris.cloud.commons.clienteId.not-found";
 }
 

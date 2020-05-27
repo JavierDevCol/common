@@ -44,7 +44,7 @@
     <repositories>
         <repository>
             <id>central</id>
-            <url>${myMavenRepo.read.url}</url>
+            <url>http://qa.wposs.com:8082/artifactory/polaris-cloud</url>
         </repository>
         <repository>
             <id>spring-milestones</id>

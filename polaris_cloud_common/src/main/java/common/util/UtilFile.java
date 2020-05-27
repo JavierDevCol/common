@@ -1,5 +1,7 @@
 package common.util;
 
+import com.google.common.io.Files;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -55,19 +57,31 @@ public final class UtilFile {
         }
     }
 
-    public static String createFileTemp(String nombre, String extension) {
-        File fileTemp = createFileTempReturnFile(nombre, extension);
+
+    public static String createFileTemp(String nombre, String extension, byte[] data) {
+        File fileTemp = createFileTempReturnFile(nombre, extension, data);
         if (fileTemp == null) {
             return null;
         }
         return fileTemp.getAbsolutePath();
     }
 
-    public static File createFileTempReturnFile(String nombre, String extension) {
+    public static String createFileTemp(String nombre, String extension) {
+        File fileTemp = createFileTempReturnFile(nombre, extension, null);
+        if (fileTemp == null) {
+            return null;
+        }
+        return fileTemp.getAbsolutePath();
+    }
+
+    public static File createFileTempReturnFile(String nombre, String extension, byte[] data) {
         File fileTemp = null;
         try {
             fileTemp = File.createTempFile(nombre, extension);
             fileTemp.deleteOnExit();
+            if (data != null) {
+                Files.write(data, fileTemp);
+            }
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -79,7 +93,7 @@ public final class UtilFile {
         if (nombre != null && !nombre.isEmpty() && extension != null && !extension.isEmpty() && data != null && !data.isEmpty()) {
             BufferedWriter out = null;
             try {
-                File tempFile = createFileTempReturnFile(nombre, extension);
+                File tempFile = createFileTempReturnFile(nombre, extension, null);
                 out = new BufferedWriter(new FileWriter(tempFile));
                 out.write(data);
                 out.close();
