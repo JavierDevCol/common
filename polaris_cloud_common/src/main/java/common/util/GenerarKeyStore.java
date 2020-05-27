@@ -12,10 +12,12 @@ import java.nio.ByteBuffer;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Objects;
 
 import static common.util.UtilFile.deleteFile;
 import static common.util.UtilFile.readBytesFile;
@@ -125,14 +127,19 @@ public final class GenerarKeyStore {
                 Enumeration<String> allAlias = ks.aliases();
                 while (allAlias.hasMoreElements()) {
                     String alias = allAlias.nextElement();
-                    byte[] data = ks.getCertificate(alias).getEncoded();
-                    listResponse.add(
-                            ByteNombreDto
-                                    .builder()
-                                    .nombre(alias)
-                                    .data(ByteBuffer.wrap(data))
-                                    .build()
-                    );
+                    if (Objects.nonNull(alias)) {
+                        Certificate certificate = ks.getCertificate(alias);
+                        if (Objects.nonNull(certificate)) {
+                            byte[] data = certificate.getEncoded();
+                            listResponse.add(
+                                    ByteNombreDto
+                                            .builder()
+                                            .nombre(alias)
+                                            .data(ByteBuffer.wrap(data))
+                                            .build()
+                            );
+                        }
+                    }
                 }
             }
             catch (IOException e) {
