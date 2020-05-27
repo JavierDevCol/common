@@ -9,10 +9,11 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.Certificate;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -128,9 +129,9 @@ public final class GenerarKeyStore {
                 while (allAlias.hasMoreElements()) {
                     String alias = allAlias.nextElement();
                     if (Objects.nonNull(alias)) {
-                        Certificate certificate = ks.getCertificate(alias);
-                        if (Objects.nonNull(certificate)) {
-                            byte[] data = certificate.getEncoded();
+                        Key key = ks.getKey(alias, passArray);
+                        if (Objects.nonNull(key)) {
+                            byte[] data = key.getEncoded();
                             listResponse.add(
                                     ByteNombreDto
                                             .builder()
@@ -149,6 +150,9 @@ public final class GenerarKeyStore {
                 e.printStackTrace();
             }
             catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
+            catch (UnrecoverableKeyException e) {
                 e.printStackTrace();
             }
         }
