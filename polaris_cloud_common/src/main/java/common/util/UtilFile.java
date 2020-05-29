@@ -16,7 +16,7 @@ public final class UtilFile {
     private UtilFile() {
     }
 
-    private static String readStringFile(String filename) {
+    public static String readStringFile(String filename) {
         String data = "";
         BufferedReader br = null;
         try {
