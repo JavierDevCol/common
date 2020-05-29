@@ -2,9 +2,11 @@ package common.util;
 
 import com.google.common.io.Files;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -12,6 +14,32 @@ import java.nio.ByteBuffer;
 public final class UtilFile {
 
     private UtilFile() {
+    }
+
+    private static String readStringFile(String filename) {
+        String data = "";
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader(filename));
+            String line;
+            while ((line = br.readLine()) != null) {
+                data += line + "\n";
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        finally {
+            try {
+                if (br != null) {
+                    br.close();
+                }
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return data;
     }
 
     public static ByteBuffer readBytesFile(String ruta) {
