@@ -1,12 +1,12 @@
 package common.util;
 
 import common.types.ByteNombreDto;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.security.Key;
@@ -20,13 +20,12 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Objects;
 
-import static common.util.UtilFile.deleteFile;
-import static common.util.UtilFile.readBytesFile;
-
+@Slf4j
 public final class GenerarKeyStore {
 
     public static final String TYPE = "jceks";
-    public static final String EXTENSION = "." + TYPE;
+    public static final String SECRET_KEY = "AES";
+    public static final String EXTENSION = ".bks";
 
     private GenerarKeyStore() {
     }
@@ -40,18 +39,15 @@ public final class GenerarKeyStore {
                 ks.load(null, passArray);
 
                 for (ByteNombreDto bytes : data) {
-                    SecretKey secretKey = new SecretKeySpec(bytes.getData().array(), "AES");
+                    SecretKey secretKey = new SecretKeySpec(bytes.getData().array(), SECRET_KEY);
                     KeyStore.SecretKeyEntry secret = new KeyStore.SecretKeyEntry(secretKey);
                     KeyStore.ProtectionParameter password = new KeyStore.PasswordProtection(passArray);
                     ks.setEntry(bytes.getNombre(), secret, password);
                 }
 
-                String path = UtilFile.createFileTemp("keystore", EXTENSION);
-                try (FileOutputStream fos = new FileOutputStream(path)) {
-                    ks.store(fos, passArray);
-                }
-                ByteBuffer keyStoreData = readBytesFile(path);
-                deleteFile(path);
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                ks.store(outputStream, passArray);
+                ByteBuffer keyStoreData = ByteBuffer.wrap(outputStream.toByteArray());
                 return keyStoreData;
             }
             catch (IOException e) {
@@ -72,28 +68,24 @@ public final class GenerarKeyStore {
 
     public static ByteBuffer updateArchive(String passwordEntry, List<ByteNombreDto> data, ByteBuffer dataKeyStore) {
         try {
-            String path = UtilFile.createFileTemp("keystore", EXTENSION, dataKeyStore.array());
-            FileInputStream fileInputStream = new FileInputStream(path);
-
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(dataKeyStore.array());
             KeyStore ks = KeyStore.getInstance(TYPE);
             char[] passArray = passwordEntry.toCharArray();
             try {
-                ks.load(fileInputStream, passArray);
+                ks.load(inputStream, passArray);
                 for (ByteNombreDto byteNombreDto : data) {
                     ks.deleteEntry(byteNombreDto.getNombre());
                 }
                 for (ByteNombreDto bytes : data) {
-                    SecretKey secretKey = new SecretKeySpec(bytes.getData().array(), "AES");
+                    SecretKey secretKey = new SecretKeySpec(bytes.getData().array(), SECRET_KEY);
                     KeyStore.SecretKeyEntry secret = new KeyStore.SecretKeyEntry(secretKey);
                     KeyStore.ProtectionParameter password = new KeyStore.PasswordProtection(passArray);
                     ks.setEntry(bytes.getNombre(), secret, password);
                 }
 
-                try (FileOutputStream fos = new FileOutputStream(path)) {
-                    ks.store(fos, passArray);
-                }
-                ByteBuffer keyStoreData = readBytesFile(path);
-                deleteFile(path);
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                ks.store(outputStream, passArray);
+                ByteBuffer keyStoreData = ByteBuffer.wrap(outputStream.toByteArray());
                 return keyStoreData;
             }
             catch (IOException e) {
@@ -109,22 +101,17 @@ public final class GenerarKeyStore {
         catch (KeyStoreException e) {
             e.printStackTrace();
         }
-        catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
         return null;
     }
 
     public static List<ByteNombreDto> loadArchives(String passwordEntry, ByteBuffer dataKeyStore) {
         List<ByteNombreDto> listResponse = new ArrayList<>();
         try {
-            String path = UtilFile.createFileTemp("keystore", EXTENSION, dataKeyStore.array());
-            FileInputStream fileInputStream = new FileInputStream(path);
-
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(dataKeyStore.array());
             KeyStore ks = KeyStore.getInstance(TYPE);
             char[] passArray = passwordEntry.toCharArray();
             try {
-                ks.load(fileInputStream, passArray);
+                ks.load(inputStream, passArray);
                 Enumeration<String> allAlias = ks.aliases();
                 while (allAlias.hasMoreElements()) {
                     String alias = allAlias.nextElement();
@@ -157,9 +144,6 @@ public final class GenerarKeyStore {
             }
         }
         catch (KeyStoreException e) {
-            e.printStackTrace();
-        }
-        catch (FileNotFoundException e) {
             e.printStackTrace();
         }
         return listResponse;
