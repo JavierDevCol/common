@@ -23,9 +23,9 @@ import java.util.Objects;
 @Slf4j
 public final class GenerarKeyStore {
 
-    public static final String TYPE = "jceks";
+    public static final String TYPE = "pkcs12";
     public static final String SECRET_KEY = "AES";
-    public static final String EXTENSION = ".bks";
+    public static final String EXTENSION = ".pkcs12";
 
     private GenerarKeyStore() {
     }
