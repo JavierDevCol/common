@@ -107,6 +107,8 @@ public final class GenerarKeyStore {
     public static List<ByteNombreDto> loadArchives(String passwordEntry, ByteBuffer dataKeyStore) {
         List<ByteNombreDto> listResponse = new ArrayList<>();
         try {
+            String temp = UtilFile.createFileTemp("test", EXTENSION, dataKeyStore.array());
+            log.info(String.format("la ubicacion del archivo temporal es = %s", temp));
             ByteArrayInputStream inputStream = new ByteArrayInputStream(dataKeyStore.array());
             KeyStore ks = KeyStore.getInstance(TYPE);
             char[] passArray = passwordEntry.toCharArray();
