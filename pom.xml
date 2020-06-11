@@ -66,6 +66,7 @@
         </snapshotRepository>
     </distributionManagement>
 
+
     <profiles>
         <profile>
             <id>sonar</id>

@@ -2,6 +2,8 @@ package common.service.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
+import com.polaris.cloud.core.enums.Accion;
+import common.service.AuditoriaService;
 import common.service.ConverterService;
 import common.service.Service;
 import common.service.ValidationService;
@@ -11,6 +13,7 @@ import common.validation.groups.Delete;
 import common.validation.groups.Insert;
 import common.validation.groups.Update;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,10 +29,18 @@ import java.util.stream.Collectors;
 
 import static common.util.UtilJavaReflection.pasarEntityToMaps;
 
-public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>, ID extends Serializable> implements Service<D, ID> {
+public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>, ID extends Serializable>
+        implements Service<D, ID> {
 
     @Autowired
     private ConverterService converterService;
+
+    @Autowired(required = false)
+    private AuditoriaService auditoriaService;
+
+    @Autowired
+    private MessageSource messageSource;
+
     @Autowired
     private ValidationService validationService;
     private Class<E> entityClass = (Class) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[1];
@@ -66,6 +77,7 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
 
         pasarEntityToMaps(entity);
         this.getDao().save(entity);
+        auditoria(entity, Accion.INSERT);
         return entity.getId();
     }
 
@@ -89,7 +101,10 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
         Iterable<E> entitiesSaved = getDao().saveAll(entities);
         return Streams
                 .stream(entitiesSaved)
-                .map(e -> getConverterService().convertTo(e, domainClass))
+                .map(e -> {
+                    auditoria(e, Accion.INSERT);
+                    return getConverterService().convertTo(e, domainClass);
+                })
                 .collect(Collectors.toList());
     }
 
@@ -101,6 +116,7 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
         E entity = (E) this.converterService.convertTo(domainBean, this.entityClass);
         pasarEntityToMaps(entity);
         this.getDao().save(entity);
+        auditoria(entity, Accion.UPDATE);
     }
 
     @Transactional(
@@ -120,6 +136,7 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
             entities.add(entity);
         });
         getDao().saveAll(entities);
+        entities.forEach(e -> auditoria(e, Accion.UPDATE));
     }
 
     @Transactional(
@@ -141,7 +158,10 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
         Iterable<E> entitiesSaved = getDao().saveAll(entities);
         return Streams
                 .stream(entitiesSaved)
-                .map(e -> converterService.convertTo(e, domainClass))
+                .map(e -> {
+                    auditoria(e, Accion.UPDATE);
+                    return converterService.convertTo(e, domainClass);
+                })
                 .collect(Collectors.toList());
     }
 
@@ -154,6 +174,7 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
         E entity = (E) this.converterService.convertTo(domainBean, this.entityClass);
         pasarEntityToMaps(entity);
         this.getDao().save(entity);
+        auditoria(entity, Accion.UPDATE);
     }
 
     @Transactional(
@@ -162,6 +183,8 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
     public void delete(ID id) {
         Optional.ofNullable(this.findById(id)).ifPresent((obj) -> {
             this.validationService.validate(obj, Delete.class);
+            E entity = getConverterService().convertTo(obj, entityClass);
+            auditoria(entity, Accion.DELETE);
         });
         this.getDao().deleteById(id);
     }
@@ -178,7 +201,7 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
     )
     public void delete(D object) {
         this.validationService.validate(object, Delete.class);
-        //this.getDao().delete(object.getId());
+        this.delete(object.getId());
     }
 
     public D findById(ID id) {
@@ -209,6 +232,12 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
         return result;
     }
 
+    private void auditoria(E entity, Accion accion) {
+        if (isAuditoria()) {
+            auditoriaService.auditar(entity, getModulo(), accion);
+        }
+    }
+
     protected abstract CrudRepository<E, ID> getDao();
 
     protected ConverterService getConverterService() {
@@ -217,5 +246,21 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
 
     protected ValidationService getValidationService() {
         return this.validationService;
+    }
+
+    protected MessageSource getMessageSource() {
+        return this.messageSource;
+    }
+
+    protected AuditoriaService getAuditoriaService() {
+        return this.auditoriaService;
+    }
+
+    protected String getModulo() {
+        return domainClass.getSimpleName();
+    }
+
+    protected boolean isAuditoria() {
+        return true;
     }
 }

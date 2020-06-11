@@ -23,9 +23,9 @@ import java.util.Objects;
 @Slf4j
 public final class GenerarKeyStore {
 
-    public static final String TYPE = "pkcs12";
+    public static final String TYPE = "jceks";
     public static final String SECRET_KEY = "AES";
-    public static final String EXTENSION = ".pkcs12";
+    public static final String EXTENSION = ".jceks";
 
     private GenerarKeyStore() {
     }
@@ -33,6 +33,42 @@ public final class GenerarKeyStore {
     public static ByteBuffer generarKeyStore(String passwordEntry, List<ByteNombreDto> data) {
         try {
             KeyStore ks = KeyStore.getInstance(TYPE);
+
+            char[] passArray = passwordEntry.toCharArray();
+            try {
+                ks.load(null, passArray);
+
+                for (ByteNombreDto bytes : data) {
+                    SecretKey secretKey = new SecretKeySpec(bytes.getData().array(), SECRET_KEY);
+                    KeyStore.SecretKeyEntry secret = new KeyStore.SecretKeyEntry(secretKey);
+                    KeyStore.ProtectionParameter password = new KeyStore.PasswordProtection(passArray);
+                    ks.setEntry(bytes.getNombre(), secret, password);
+                }
+
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                ks.store(outputStream, passArray);
+                ByteBuffer keyStoreData = ByteBuffer.wrap(outputStream.toByteArray());
+                return keyStoreData;
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+            catch (CertificateException e) {
+                e.printStackTrace();
+            }
+            catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
+        }
+        catch (KeyStoreException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static ByteBuffer generarKeyStore(String passwordEntry, List<ByteNombreDto> data, TipoKeyStore tipo) {
+        try {
+            KeyStore ks = KeyStore.getInstance(tipo.getTipo());
 
             char[] passArray = passwordEntry.toCharArray();
             try {
