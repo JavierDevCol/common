@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
-public abstract class ListResponse<T> extends BaseResponse {
+public class ListResponse<T> extends BaseResponse {
     private long count;
     private List<T> data;
 
