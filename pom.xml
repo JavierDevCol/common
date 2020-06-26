@@ -41,29 +41,31 @@
         <yourHttpAuthWritePassword>Wposs.2020</yourHttpAuthWritePassword>
     </properties>
 
+
     <repositories>
         <repository>
-            <id>central</id>
-            <url>http://qa.wposs.com:8082/artifactory/polaris-cloud</url>
-        </repository>
-        <repository>
-            <id>spring-milestones</id>
-            <name>Spring Milestones</name>
-            <url>https://repo.spring.io/milestone</url>
+            <id>gestionti0648</id>
+            <url>https://pkgs.dev.azure.com/gestionti0648/_packaging/gestionti0648/maven/v1</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
     </repositories>
 
     <distributionManagement>
         <repository>
-            <id>central</id>
-            <name>ServerJfrog-releases</name>
-            <url>${myMavenRepo.write.url}</url>
+            <id>gestionti0648</id>
+            <url>https://pkgs.dev.azure.com/gestionti0648/_packaging/gestionti0648/maven/v1</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
-        <snapshotRepository>
-            <id>snapshots</id>
-            <name>ServerJfrog-snapshots</name>
-            <url>${myMavenRepo.write.url}</url>
-        </snapshotRepository>
     </distributionManagement>
 
 
