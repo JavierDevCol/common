@@ -41,16 +41,17 @@
         <yourHttpAuthWritePassword>Wposs.2020</yourHttpAuthWritePassword>
     </properties>
 
-
     <repositories>
         <repository>
             <id>gestionti0648</id>
             <url>https://pkgs.dev.azure.com/gestionti0648/_packaging/gestionti0648/maven/v1</url>
             <releases>
                 <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
             </releases>
             <snapshots>
                 <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
             </snapshots>
         </repository>
     </repositories>
@@ -61,13 +62,14 @@
             <url>https://pkgs.dev.azure.com/gestionti0648/_packaging/gestionti0648/maven/v1</url>
             <releases>
                 <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
             </releases>
             <snapshots>
                 <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
             </snapshots>
         </repository>
     </distributionManagement>
-
 
     <profiles>
         <profile>

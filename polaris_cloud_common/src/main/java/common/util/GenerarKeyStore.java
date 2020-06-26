@@ -42,7 +42,7 @@ public final class GenerarKeyStore {
                     SecretKey secretKey = new SecretKeySpec(bytes.getData().array(), SECRET_KEY);
                     KeyStore.SecretKeyEntry secret = new KeyStore.SecretKeyEntry(secretKey);
                     KeyStore.ProtectionParameter password = new KeyStore.PasswordProtection(passArray);
-                    ks.setEntry(bytes.getNombre(), secret, password);
+                    ks.setEntry(bytes.getNombre(), secret, null);
                 }
 
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -116,7 +116,7 @@ public final class GenerarKeyStore {
                     SecretKey secretKey = new SecretKeySpec(bytes.getData().array(), SECRET_KEY);
                     KeyStore.SecretKeyEntry secret = new KeyStore.SecretKeyEntry(secretKey);
                     KeyStore.ProtectionParameter password = new KeyStore.PasswordProtection(passArray);
-                    ks.setEntry(bytes.getNombre(), secret, password);
+                    ks.setEntry(bytes.getNombre(), secret, null);
                 }
 
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
