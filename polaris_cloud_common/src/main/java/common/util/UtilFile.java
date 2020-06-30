@@ -102,6 +102,10 @@ public final class UtilFile {
         return fileTemp.getAbsolutePath();
     }
 
+    public static File createFileTempReturnFile(String nombre, String extension) {
+        return createFileTempReturnFile(nombre, extension, null);
+    }
+
     public static File createFileTempReturnFile(String nombre, String extension, byte[] data) {
         File fileTemp = null;
         try {

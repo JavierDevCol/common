@@ -8,7 +8,7 @@ import lombok.Getter;
 public enum TipoKeyStore {
 
     JKS("jks","jks"),
-    JCEKS("jceks","jceks"),
+    JCEKS("jceks","pfx"),
     PCKS12("pcks12","pcks12");
 
     private String tipo;
