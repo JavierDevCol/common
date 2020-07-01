@@ -3,6 +3,8 @@ package common.util;
 import common.types.ByteNombreDto;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -35,6 +37,47 @@ public final class GenerarKeyStore {
     public static ByteBuffer generarKeyStore(String passwordEntry, List<ByteNombreDto> data) {
         return generarKeyStore(passwordEntry, data, TipoKeyStore.JCEKS);
     }
+
+    public static ByteBuffer generarKeyStoreEntry(String passwordEntry, List<ByteNombreDto> data) {
+        log.info(String.format("el password es %s", passwordEntry));
+        try {
+            KeyStore ks = KeyStore.getInstance(TYPE);
+
+            char[] passArray = passwordEntry.toCharArray();
+            try {
+                ks.load(null, passArray);
+
+
+                for (ByteNombreDto bytes : data) {
+                    SecretKey secretKey = new SecretKeySpec(bytes.getData().array(), SECRET_KEY);
+                    KeyStore.SecretKeyEntry secret = new KeyStore.SecretKeyEntry(secretKey);
+                    KeyStore.ProtectionParameter password = new KeyStore.PasswordProtection(new char[]{});
+                    ks.setEntry(bytes.getNombre(), secret, password);
+                }
+
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                ks.store(outputStream, passArray);
+                ByteBuffer keyStoreData = ByteBuffer.wrap(outputStream.toByteArray());
+                String temp = UtilFile.createFileTemp("test", EXTENSION, outputStream.toByteArray());
+                log.info(String.format("la ubicacion del archivo temporal es = %s", temp));
+                return keyStoreData;
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+            catch (CertificateException e) {
+                e.printStackTrace();
+            }
+            catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
+        }
+        catch (KeyStoreException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
     public static ByteBuffer generarKeyStore(String passwordEntry, List<ByteNombreDto> data, TipoKeyStore tipo) {
         log.info(String.format("el password es %s", passwordEntry));
@@ -120,6 +163,89 @@ public final class GenerarKeyStore {
         return null;
     }
 
+    public static ByteBuffer updateArchiveEntry(String passwordEntry, List<ByteNombreDto> data, ByteBuffer dataKeyStore) {
+        try {
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(dataKeyStore.array());
+            KeyStore ks = KeyStore.getInstance(TYPE);
+            char[] passArray = passwordEntry.toCharArray();
+            try {
+                ks.load(inputStream, passArray);
+                for (ByteNombreDto byteNombreDto : data) {
+                    ks.deleteEntry(byteNombreDto.getNombre());
+                }
+                for (ByteNombreDto bytes : data) {
+                    SecretKey secretKey = new SecretKeySpec(bytes.getData().array(), SECRET_KEY);
+                    KeyStore.SecretKeyEntry secret = new KeyStore.SecretKeyEntry(secretKey);
+                    KeyStore.ProtectionParameter password = new KeyStore.PasswordProtection(new char[]{});
+                    ks.setEntry(bytes.getNombre(), secret, password);
+                }
+
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                ks.store(outputStream, passArray);
+                ByteBuffer keyStoreData = ByteBuffer.wrap(outputStream.toByteArray());
+                return keyStoreData;
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+            catch (CertificateException e) {
+                e.printStackTrace();
+            }
+            catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
+        }
+        catch (KeyStoreException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    public static List<ByteNombreDto> loadArchives(String passwordEntry, ByteBuffer dataKeyStore) {
+        ArrayList listResponse = new ArrayList();
+
+        try {
+            String temp = UtilFile.createFileTemp("test", ".pfx", dataKeyStore.array());
+            log.info(String.format("la ubicacion del archivo temporal es = %s", temp));
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(dataKeyStore.array());
+            KeyStore ks = KeyStore.getInstance("jceks");
+            char[] passArray = passwordEntry.toCharArray();
+
+            try {
+                ks.load(inputStream, passArray);
+                Enumeration allAlias = ks.aliases();
+
+                while (allAlias.hasMoreElements()) {
+                    String alias = (String) allAlias.nextElement();
+                    if (Objects.nonNull(alias)) {
+                        Key key = ks.getKey(alias, new char[]{});
+                        if (Objects.nonNull(key)) {
+                            byte[] data = key.getEncoded();
+                            listResponse.add(ByteNombreDto.builder().nombre(alias).data(ByteBuffer.wrap(data)).build());
+                        }
+                    }
+                }
+            }
+            catch (IOException var11) {
+                var11.printStackTrace();
+            }
+            catch (CertificateException var12) {
+                var12.printStackTrace();
+            }
+            catch (NoSuchAlgorithmException var13) {
+                var13.printStackTrace();
+            }
+            catch (UnrecoverableKeyException var14) {
+                var14.printStackTrace();
+            }
+        }
+        catch (KeyStoreException var15) {
+            var15.printStackTrace();
+        }
+
+        return listResponse;
+    }
 
     public static List<ByteNombreDto> loadArchivesPublic(String passwordEntry, ByteBuffer dataKeyStore) {
         List<ByteNombreDto> listResponse = new ArrayList<>();
