@@ -201,6 +201,36 @@ public final class GenerarKeyStore {
         return null;
     }
 
+    public static ByteBuffer deleteArchiveEntry(String passwordEntry, List<String> data, ByteBuffer dataKeyStore) {
+        try {
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(dataKeyStore.array());
+            KeyStore ks = KeyStore.getInstance(TYPE);
+            char[] passArray = passwordEntry.toCharArray();
+            try {
+                ks.load(inputStream, passArray);
+                for (String nombre : data) {
+                    ks.deleteEntry(nombre);
+                }
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                ks.store(outputStream, passArray);
+                ByteBuffer keyStoreData = ByteBuffer.wrap(outputStream.toByteArray());
+                return keyStoreData;
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+            catch (CertificateException e) {
+                e.printStackTrace();
+            }
+            catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
+        }
+        catch (KeyStoreException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public static List<ByteNombreDto> loadArchives(String passwordEntry, ByteBuffer dataKeyStore) {
         ArrayList listResponse = new ArrayList();
