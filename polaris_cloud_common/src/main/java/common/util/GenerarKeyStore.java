@@ -279,14 +279,9 @@ public final class GenerarKeyStore {
 
     public static List<ByteNombreDto> loadArchivesPublic(String passwordEntry, ByteBuffer dataKeyStore) {
         List<ByteNombreDto> listResponse = new ArrayList<>();
+        KeyStore ks = cargueKeyStore(passwordEntry, dataKeyStore);
         try {
-            String temp = UtilFile.createFileTemp("test", EXTENSION, dataKeyStore.array());
-            log.info(String.format("la ubicacion del archivo temporal es = %s", temp));
-            ByteArrayInputStream inputStream = new ByteArrayInputStream(dataKeyStore.array());
-            KeyStore ks = KeyStore.getInstance(TYPE);
-            char[] passArray = passwordEntry.toCharArray();
-            try {
-                ks.load(inputStream, passArray);
+            if (ks != null) {
                 Enumeration<String> allAlias = ks.aliases();
                 while (allAlias.hasMoreElements()) {
                     String alias = allAlias.nextElement();
@@ -305,32 +300,18 @@ public final class GenerarKeyStore {
                     }
                 }
             }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
-            catch (CertificateException e) {
-                e.printStackTrace();
-            }
-            catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            }
         }
-        catch (KeyStoreException e) {
-            e.printStackTrace();
+        catch (KeyStoreException | CertificateException ex) {
+            ex.printStackTrace();
         }
         return listResponse;
     }
 
     public static List<ByteNombreDto> loadArchivesPrivate(String passwordEntry, ByteBuffer dataKeyStore) {
         List<ByteNombreDto> listResponse = new ArrayList<>();
+        KeyStore ks = cargueKeyStore(passwordEntry, dataKeyStore);
         try {
-            String temp = UtilFile.createFileTemp("test", EXTENSION, dataKeyStore.array());
-            log.info(String.format("la ubicacion del archivo temporal es = %s", temp));
-            ByteArrayInputStream inputStream = new ByteArrayInputStream(dataKeyStore.array());
-            KeyStore ks = KeyStore.getInstance(TYPE);
-            char[] passArray = passwordEntry.toCharArray();
-            try {
-                ks.load(inputStream, passArray);
+            if (ks != null) {
                 Enumeration<String> allAlias = ks.aliases();
                 while (allAlias.hasMoreElements()) {
                     String alias = allAlias.nextElement();
@@ -349,24 +330,35 @@ public final class GenerarKeyStore {
                     }
                 }
             }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
-            catch (CertificateException e) {
-                e.printStackTrace();
-            }
-            catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            }
-            catch (UnrecoverableKeyException e) {
-                e.printStackTrace();
-            }
         }
-        catch (KeyStoreException e) {
+        catch (NoSuchAlgorithmException | UnrecoverableKeyException | KeyStoreException e) {
             e.printStackTrace();
         }
         return listResponse;
     }
 
+    private static KeyStore cargueKeyStore(String passwordEntry, ByteBuffer dataKeyStore) {
+        String temp = UtilFile.createFileTemp("test", EXTENSION, dataKeyStore.array());
+        log.info(String.format("la ubicacion del archivo temporal es = %s", temp));
+        try {
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(dataKeyStore.array());
+            KeyStore ks = KeyStore.getInstance("JKS");
+            char[] passArray = passwordEntry.toCharArray();
+            ks.load(inputStream, passArray);
+            return ks;
+        }
+        catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException e) {
+            try {
+                ByteArrayInputStream inputStream = new ByteArrayInputStream(dataKeyStore.array());
+                KeyStore ks = KeyStore.getInstance(TYPE);
+                char[] passArray = passwordEntry.toCharArray();
+                ks.load(inputStream, passArray);
+                return ks;
+            }
+            catch (Exception ex) {
+            }
+        }
+        return null;
+    }
 
 }
