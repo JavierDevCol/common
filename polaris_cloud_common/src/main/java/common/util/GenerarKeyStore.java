@@ -98,14 +98,14 @@ public final class GenerarKeyStore {
 
                     }
                     catch (Exception e) {
-
+                        e.printStackTrace();
                     }
                 }
 
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                 ks.store(outputStream, passArray);
                 ByteBuffer keyStoreData = ByteBuffer.wrap(outputStream.toByteArray());
-                String temp = UtilFile.createFileTemp("test", EXTENSION, outputStream.toByteArray());
+                String temp = UtilFile.createFileTemp("test", "." + tipo.getExtension(), outputStream.toByteArray());
                 log.info(String.format("la ubicacion del archivo temporal es = %s", temp));
                 return keyStoreData;
             }
