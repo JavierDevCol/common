@@ -94,7 +94,7 @@ public final class GenerarKeyStore {
                     try {
                         CertificateFactory cf = CertificateFactory.getInstance("X.509");
                         X509Certificate certificate = (X509Certificate) cf.generateCertificate(inputStream);
-                        ks.setKeyEntry(bytes.getNombre(), new byte[]{}, new Certificate[]{certificate});
+                        ks.setCertificateEntry(bytes.getNombre(), certificate);
 
                     }
                     catch (Exception e) {

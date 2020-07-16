@@ -9,7 +9,7 @@ public enum TipoKeyStore {
 
     JKS("jks","jks"),
     JCEKS("jceks","pfx"),
-    PCKS12("pcks12","pcks12");
+    PCKS12("pkcs12","pfx");
 
     private String tipo;
     private String extension;
