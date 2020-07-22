@@ -4,6 +4,7 @@ import com.polaris.cloud.client.AuditoriaClient;
 import com.polaris.cloud.core.enums.Accion;
 import common.async.AuditoriaInsertarTaskDto;
 import common.async.AuditoriaTask;
+import common.http.util.HttpRequestContextHolder;
 import common.service.AuditoriaService;
 import common.types.Entity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,8 @@ public class AuditoriaServiceImpl implements AuditoriaService {
         auditoriaInsertarTaskDto.setModulo(modulo);
         auditoriaInsertarTaskDto.setAuditoriaClient(auditoriaClient);
         auditoriaInsertarTaskDto.setAccion(accion);
+        auditoriaInsertarTaskDto.setClienteId(HttpRequestContextHolder.getCliente());
+        auditoriaInsertarTaskDto.setUsuarioId(HttpRequestContextHolder.getUsuario());
         executor.execute(new AuditoriaTask(auditoriaInsertarTaskDto));
     }
 }

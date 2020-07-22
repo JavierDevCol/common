@@ -5,6 +5,7 @@ import common.util.UtilJson;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Slf4j
 public class AuditoriaTask implements Runnable {
@@ -26,6 +27,12 @@ public class AuditoriaTask implements Runnable {
                     requestDto.getEntity().getClass().getSimpleName()
             );
             dto.setObjeto(UtilJson.toString(requestDto.getEntity()));
+            if (requestDto.getClienteId() != null) {
+                dto.setClienteId(UUID.fromString(requestDto.getClienteId()));
+            }
+            if (requestDto.getUsuarioId() != null) {
+                dto.setUsuarioId(UUID.fromString(requestDto.getUsuarioId()));
+            }
 
             requestDto.getAuditoriaClient().insert(dto);
         }

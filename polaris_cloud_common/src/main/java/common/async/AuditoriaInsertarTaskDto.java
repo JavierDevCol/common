@@ -18,4 +18,7 @@ public class AuditoriaInsertarTaskDto {
     private String modulo;
     private AuditoriaClient auditoriaClient;
     private Accion accion;
+    private String clienteId;
+    private String usuarioId;
+
 }
