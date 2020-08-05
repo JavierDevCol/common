@@ -29,8 +29,8 @@ public class UtilOfuscacion {
         Class claseReq = oReq.getClass();
         Class claseBd = oBd.getClass();
 
-        Field attributtesReq[] = claseReq.getFields();
-        Field attributtesBd[] = claseBd.getFields();
+        Field attributtesReq[] = claseReq.getSuperclass().getDeclaredFields();
+        Field attributtesBd[] = claseBd.getSuperclass().getDeclaredFields();
 
         for (int i = 0; i < attributtesReq.length; i++) {
             Object valorReq = UtilJavaReflection.getValueField(oReq, attributtesReq[i]);

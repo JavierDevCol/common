@@ -1,6 +1,5 @@
 package common.http.filter;
 
-import common.config.HttpResponseBody;
 import common.config.HttpRquestBody;
 import common.http.util.HttpRequestContextHolder;
 import org.springframework.util.StringUtils;
@@ -40,7 +39,6 @@ public class HttpRequestContextFilterImpl implements Filter {
                 HttpRequestContextHolder.setCliente(cliente);
             }
             request = new HttpRquestBody((HttpServletRequest) request);
-            response = new HttpResponseBody((HttpServletResponse) response);
             chain.doFilter(request, response);
         }
         catch (Exception e) {
