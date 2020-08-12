@@ -1,7 +1,13 @@
 package common.util;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.text.DecimalFormat;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 public final class UtilObject {
     private UtilObject() {
@@ -100,5 +106,36 @@ public final class UtilObject {
 
         return bolValue;
     }
+
+    public static <T> T objectToClass(Object object, Class<T> type) {
+        ObjectMapper mapperObj = new ObjectMapper();
+
+        try {
+            return mapperObj.convertValue(object, type);
+        }
+        catch (Exception var4) {
+            return null;
+        }
+    }
+
+    public static <T> List<T> objectListToClassList(List<Object> objectList, Class<T> type) {
+        List<T> list = new ArrayList<>();
+        for (Object object : objectList) {
+            list.add(objectToClass(object, type));
+        }
+        return list;
+    }
+
+    public static List<Object> convertObjectToList(Object obj) {
+        List<Object> list = new ArrayList<>();
+        if (obj.getClass().isArray()) {
+            list = Arrays.asList((Object[]) obj);
+        }
+        else if (obj instanceof Collection) {
+            list = new ArrayList<>((Collection<Object>) obj);
+        }
+        return list;
+    }
+
 }
 
