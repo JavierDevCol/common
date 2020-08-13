@@ -75,7 +75,7 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
                 entity.setId((ID) UUID.randomUUID());
             }
         }
-        else {
+        else if (isMerged()) {
             E entityDb = this.getDao().findById(domainBean.getId()).orElse(null);
             entity = (E) UtilOfuscacion.mergeDataOfuscada(entity, entityDb);
         }
@@ -99,7 +99,7 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
                     entity.setId((ID) UUID.randomUUID());
                 }
             }
-            else {
+            else if (isMerged()) {
                 E entityDb = this.getDao().findById(d.getId()).orElse(null);
                 entity = (E) UtilOfuscacion.mergeDataOfuscada(entity, entityDb);
             }
@@ -122,8 +122,10 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
     public void update(D domainBean) {
         this.validationService.validate(domainBean, Update.class);
         E entity = (E) this.converterService.convertTo(domainBean, this.entityClass);
-        E entityBd = this.getDao().findById(domainBean.getId()).orElse(null);
-        entity = (E) UtilOfuscacion.mergeDataOfuscada(entity, entityBd);
+        if (isMerged()) {
+            E entityBd = this.getDao().findById(domainBean.getId()).orElse(null);
+            entity = (E) UtilOfuscacion.mergeDataOfuscada(entity, entityBd);
+        }
         pasarEntityToMaps(entity);
         this.getDao().save(entity);
         auditoria(entity, Accion.UPDATE);
@@ -142,7 +144,7 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
                     entity.setId((ID) UUID.randomUUID());
                 }
             }
-            else {
+            else if (isMerged()) {
                 E entityDb = this.getDao().findById(d.getId()).orElse(null);
                 entity = (E) UtilOfuscacion.mergeDataOfuscada(entity, entityDb);
             }
@@ -166,7 +168,7 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
                     entity.setId((ID) UUID.randomUUID());
                 }
             }
-            else {
+            else if (isMerged()) {
                 E entityDb = this.getDao().findById(d.getId()).orElse(null);
                 entity = (E) UtilOfuscacion.mergeDataOfuscada(entity, entityDb);
             }
@@ -190,8 +192,10 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
         domainBean.setId(id);
         this.validationService.validate(domainBean, Update.class);
         E entity = (E) this.converterService.convertTo(domainBean, this.entityClass);
-        E entityDb = this.getDao().findById(domainBean.getId()).orElse(null);
-        entity = (E) UtilOfuscacion.mergeDataOfuscada(entity, entityDb);
+        if (isMerged()) {
+            E entityDb = this.getDao().findById(domainBean.getId()).orElse(null);
+            entity = (E) UtilOfuscacion.mergeDataOfuscada(entity, entityDb);
+        }
         pasarEntityToMaps(entity);
         this.getDao().save(entity);
         auditoria(entity, Accion.UPDATE);
@@ -283,4 +287,9 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
     protected boolean isAuditoria() {
         return true;
     }
+
+    protected boolean isMerged() {
+        return true;
+    }
+
 }
