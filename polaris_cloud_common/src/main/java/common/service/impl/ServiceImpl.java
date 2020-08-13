@@ -142,6 +142,10 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
                     entity.setId((ID) UUID.randomUUID());
                 }
             }
+            else {
+                E entityDb = this.getDao().findById(d.getId()).orElse(null);
+                entity = (E) UtilOfuscacion.mergeDataOfuscada(entity, entityDb);
+            }
             pasarEntityToMaps(entity);
             entities.add(entity);
         });
@@ -161,6 +165,10 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
                 if (typeId.getSimpleName().equals(UUID.class.getSimpleName())) {
                     entity.setId((ID) UUID.randomUUID());
                 }
+            }
+            else {
+                E entityDb = this.getDao().findById(d.getId()).orElse(null);
+                entity = (E) UtilOfuscacion.mergeDataOfuscada(entity, entityDb);
             }
             pasarEntityToMaps(entity);
             entities.add(entity);
@@ -182,6 +190,8 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
         domainBean.setId(id);
         this.validationService.validate(domainBean, Update.class);
         E entity = (E) this.converterService.convertTo(domainBean, this.entityClass);
+        E entityDb = this.getDao().findById(domainBean.getId()).orElse(null);
+        entity = (E) UtilOfuscacion.mergeDataOfuscada(entity, entityDb);
         pasarEntityToMaps(entity);
         this.getDao().save(entity);
         auditoria(entity, Accion.UPDATE);
