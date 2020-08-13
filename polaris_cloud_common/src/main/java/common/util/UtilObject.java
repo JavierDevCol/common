@@ -1,7 +1,5 @@
 package common.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -108,14 +106,8 @@ public final class UtilObject {
     }
 
     public static <T> T objectToClass(Object object, Class<T> type) {
-        ObjectMapper mapperObj = new ObjectMapper();
-
-        try {
-            return mapperObj.convertValue(object, type);
-        }
-        catch (Exception var4) {
-            return null;
-        }
+        String var = UtilJson.toString(object);
+        return UtilJson.toObject(var, type);
     }
 
     public static <T> List<T> objectListToClassList(List<Object> objectList, Class<T> type) {
