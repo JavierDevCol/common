@@ -1,12 +1,22 @@
 package common.util;
 
 
+import com.polaris.cloud.client.OfuscacionClient;
+import com.polaris.cloud.core.dto.OfuscarObjetoListaRequestDto;
+import com.polaris.cloud.core.dto.OfuscarObjetoRequestDto;
+import common.http.util.HttpRequestContextHolder;
+import org.springframework.data.cassandra.core.mapping.Table;
+
 import java.lang.reflect.Field;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
+
 
 public class UtilOfuscacion {
 
-    public UtilOfuscacion() {
+
+    UtilOfuscacion() {
     }
 
     public static boolean validarOfuscacion(Object o) {
@@ -43,5 +53,28 @@ public class UtilOfuscacion {
             }
         }
         return oReq;
+    }
+
+    public static <T> T ofuscacion(T response, Class<T> type, OfuscacionClient ofuscacionClient) {
+        if (Objects.nonNull(HttpRequestContextHolder.getUsuario())) {
+            OfuscarObjetoRequestDto ofuscarObjetoRequestDto = new OfuscarObjetoRequestDto();
+            ofuscarObjetoRequestDto.setObjeto(response);
+            ofuscarObjetoRequestDto.setNombreTabla(type.getAnnotation(Table.class).value());
+            Object objetoOfuscado = ofuscacionClient.ofuscarObjeto(HttpRequestContextHolder.getUsuario(), ofuscarObjetoRequestDto);
+            response = UtilObject.objectToClass(objetoOfuscado, type);
+        }
+        return response;
+    }
+
+    public static <T> List<T> ofuscacion(List<T> listResponse, Class<T> type, OfuscacionClient ofuscacionClient) {
+        if (Objects.nonNull(HttpRequestContextHolder.getUsuario())) {
+            OfuscarObjetoListaRequestDto ofuscarObjetoListaRequestDto = new OfuscarObjetoListaRequestDto();
+            ofuscarObjetoListaRequestDto.setListaObjeto(Collections.singletonList(listResponse));
+            ofuscarObjetoListaRequestDto.setNombreTabla(type.getAnnotation(Table.class).value());
+            List<Object> listObjetoOfuscado = ofuscacionClient.ofuscarObjetoLista(HttpRequestContextHolder.getUsuario(),
+                    ofuscarObjetoListaRequestDto);
+            listResponse = UtilObject.objectListToClassList(listObjetoOfuscado, type);
+        }
+        return listResponse;
     }
 }
