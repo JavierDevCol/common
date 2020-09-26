@@ -2,14 +2,11 @@ package common.service.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
-import com.polaris.cloud.core.enums.Accion;
-import common.service.AuditoriaService;
 import common.service.ConverterService;
 import common.service.Service;
 import common.service.ValidationService;
 import common.types.DomainBean;
 import common.types.Entity;
-import common.util.UtilOfuscacion;
 import common.validation.groups.Delete;
 import common.validation.groups.Insert;
 import common.validation.groups.Update;
@@ -35,9 +32,6 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
 
     @Autowired
     private ConverterService converterService;
-
-    @Autowired(required = false)
-    private AuditoriaService auditoriaService;
 
     @Autowired
     private MessageSource messageSource;
@@ -77,11 +71,9 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
         }
         else if (isMerged()) {
             E entityDb = this.getDao().findById(domainBean.getId()).orElse(null);
-            entity = (E) UtilOfuscacion.mergeDataOfuscada(entity, entityDb);
         }
         pasarEntityToMaps(entity);
         this.getDao().save(entity);
-        auditoria(entity, Accion.INSERT);
         return entity.getId();
     }
 
@@ -101,7 +93,6 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
             }
             else if (isMerged()) {
                 E entityDb = this.getDao().findById(d.getId()).orElse(null);
-                entity = (E) UtilOfuscacion.mergeDataOfuscada(entity, entityDb);
             }
             pasarEntityToMaps(entity);
             entities.add(entity);
@@ -110,7 +101,6 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
         return Streams
                 .stream(entitiesSaved)
                 .map(e -> {
-                    auditoria(e, Accion.INSERT);
                     return getConverterService().convertTo(e, domainClass);
                 })
                 .collect(Collectors.toList());
@@ -124,11 +114,9 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
         E entity = (E) this.converterService.convertTo(domainBean, this.entityClass);
         if (isMerged()) {
             E entityBd = this.getDao().findById(domainBean.getId()).orElse(null);
-            entity = (E) UtilOfuscacion.mergeDataOfuscada(entity, entityBd);
         }
         pasarEntityToMaps(entity);
         this.getDao().save(entity);
-        auditoria(entity, Accion.UPDATE);
     }
 
     @Transactional(
@@ -146,13 +134,11 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
             }
             else if (isMerged()) {
                 E entityDb = this.getDao().findById(d.getId()).orElse(null);
-                entity = (E) UtilOfuscacion.mergeDataOfuscada(entity, entityDb);
             }
             pasarEntityToMaps(entity);
             entities.add(entity);
         });
         getDao().saveAll(entities);
-        entities.forEach(e -> auditoria(e, Accion.UPDATE));
     }
 
     @Transactional(
@@ -170,7 +156,6 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
             }
             else if (isMerged()) {
                 E entityDb = this.getDao().findById(d.getId()).orElse(null);
-                entity = (E) UtilOfuscacion.mergeDataOfuscada(entity, entityDb);
             }
             pasarEntityToMaps(entity);
             entities.add(entity);
@@ -179,7 +164,6 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
         return Streams
                 .stream(entitiesSaved)
                 .map(e -> {
-                    auditoria(e, Accion.UPDATE);
                     return converterService.convertTo(e, domainClass);
                 })
                 .collect(Collectors.toList());
@@ -194,11 +178,9 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
         E entity = (E) this.converterService.convertTo(domainBean, this.entityClass);
         if (isMerged()) {
             E entityDb = this.getDao().findById(domainBean.getId()).orElse(null);
-            entity = (E) UtilOfuscacion.mergeDataOfuscada(entity, entityDb);
         }
         pasarEntityToMaps(entity);
         this.getDao().save(entity);
-        auditoria(entity, Accion.UPDATE);
     }
 
     @Transactional(
@@ -208,7 +190,6 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
         Optional.ofNullable(this.findById(id)).ifPresent((obj) -> {
             this.validationService.validate(obj, Delete.class);
             E entity = getConverterService().convertTo(obj, entityClass);
-            auditoria(entity, Accion.DELETE);
         });
         this.getDao().deleteById(id);
     }
@@ -256,9 +237,8 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
         return result;
     }
 
-    private void auditoria(E entity, Accion accion) {
+    private void auditoria(E entity) {
         if (isAuditoria()) {
-            auditoriaService.auditar(entity, getModulo(), accion);
         }
     }
 
@@ -276,9 +256,6 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
         return this.messageSource;
     }
 
-    protected AuditoriaService getAuditoriaService() {
-        return this.auditoriaService;
-    }
 
     protected String getModulo() {
         return domainClass.getSimpleName();
