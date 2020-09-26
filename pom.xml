@@ -28,62 +28,21 @@
         <log4j.version>1.2.17</log4j.version>
         <jaxb.version>2.2.11</jaxb.version>
         <converage.test>0.0</converage.test>
-        <myMavenRepoWriteUrl>https://mymavenrepo.com/repo/XIgZfXchIN1A8eqoPGFw/</myMavenRepoWriteUrl>
-        <myMavenRepoReadUrl>https://mymavenrepo.com/repo/GZmlT6U8w1tz7XLji6X9/</myMavenRepoReadUrl>
-        <repo.binarios.usuario>admin</repo.binarios.usuario>
-        <repo.binarios.password>Wposs.2019</repo.binarios.password>
-        <sonar.credenciales.url>http://qa.wposs.com:8081</sonar.credenciales.url>
-        <sonar.credenciales.user>gestionti</sonar.credenciales.user>
-        <sonar.credenciales.password>Wposs.2020</sonar.credenciales.password>
-        <myMavenRepo.write.url>http://qa.wposs.com:8082/artifactory/polaris-cloud</myMavenRepo.write.url>
-        <myMavenRepo.read.url>http://qa.wposs.com:8082/artifactory/polaris-cloud</myMavenRepo.read.url>
-        <yourHttpAuthReadPassword>Wposs.2020</yourHttpAuthReadPassword>
-        <yourHttpAuthWritePassword>Wposs.2020</yourHttpAuthWritePassword>
     </properties>
 
     <repositories>
         <repository>
-            <id>gestionti0648</id>
-            <url>https://pkgs.dev.azure.com/gestionti0648/_packaging/gestionti0648/maven/v1</url>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
+            <id>myMavenRepo.read</id>
+            <url>https://mymavenrepo.com/repo/A4MYu5JWWKfcmWyiymx9/</url>
         </repository>
     </repositories>
 
     <distributionManagement>
         <repository>
-            <id>gestionti0648</id>
-            <url>https://pkgs.dev.azure.com/gestionti0648/_packaging/gestionti0648/maven/v1</url>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
+            <id>myMavenRepo.write</id>
+            <url>https://mymavenrepo.com/repo/p1HLp0rcx3yPc9pODHF7/</url>
         </repository>
     </distributionManagement>
-
-    <profiles>
-        <profile>
-            <id>sonar</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <sonar.host.url>${sonar.credenciales.url}</sonar.host.url>
-                <sonar.login>${sonar.credenciales.user}</sonar.login>
-                <sonar.password>${sonar.credenciales.password}</sonar.password>
-            </properties>
-        </profile>
-    </profiles>
 
     <dependencies>
         <!-- Polaris -->
