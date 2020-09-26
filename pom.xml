@@ -4,13 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.polaris.cloud</groupId>
+    <groupId>com.group.XIV</groupId>
     <artifactId>commons</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
-        <module>polaris_cloud_common</module>
+        <module>common</module>
     </modules>
 
     <parent>
@@ -45,16 +45,6 @@
     </distributionManagement>
 
     <dependencies>
-        <!-- Polaris -->
-
-        <!-- Sonar -->
-        <dependency>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>sonar-maven-plugin</artifactId>
-            <version>3.4.0.905</version>
-            <type>pom</type>
-            <scope>install</scope>
-        </dependency>
         <!-- lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
