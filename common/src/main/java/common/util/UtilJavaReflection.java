@@ -7,7 +7,6 @@ import common.annotation.Tabla;
 import common.annotation.ToMap;
 import common.types.Entity;
 import common.types.IdObject;
-import common.types.MapEmbebido;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -167,40 +166,6 @@ public final class UtilJavaReflection {
             }
         }
         return listResponse;
-    }
-
-    public static void pasarEntityToMaps(Entity source) {
-        if (source == null) {
-            return;
-        }
-        List<Field> campos = camposConAnotacion(source, ToMap.class);
-        campos.forEach(field -> {
-            ToMap anotacion = field.getAnnotation(ToMap.class);
-            for (String nombreAttributo : anotacion.nombreAttributo()) {
-                Object objectoRecibido = getValueField(source, field);
-                if (objectoRecibido != null) {
-                    if (objectoRecibido.getClass().equals(ArrayList.class)) {
-                        Collection lista = (Collection) objectoRecibido;
-                        Collection<MapEmbebido> listaResponse = new ArrayList();
-                        lista.forEach(o -> {
-                            Entity entity = (Entity) o;
-                            Map<String, String> mapaCreate = entityToMap(entity);
-                            MapEmbebido mapEmbebido = new MapEmbebido();
-                            mapEmbebido.setMapa(mapaCreate);
-                            listaResponse.add(mapEmbebido);
-                        });
-                        setValueField(source, nombreAttributo, listaResponse, List.class);
-                    }
-                    else {
-                        Entity entity = (Entity) objectoRecibido;
-                        Map<String, String> mapaCreate = entityToMap(entity);
-                        MapEmbebido mapEmbebido = new MapEmbebido();
-                        mapEmbebido.setMapa(mapaCreate);
-                        setValueField(source, nombreAttributo, mapEmbebido, MapEmbebido.class);
-                    }
-                }
-            }
-        });
     }
 
     public static Map<String, String> entityToMap(Entity entity) {

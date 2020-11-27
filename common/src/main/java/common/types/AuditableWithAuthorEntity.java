@@ -6,27 +6,27 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.cassandra.core.mapping.Column;
 
+import javax.persistence.Column;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 public abstract class AuditableWithAuthorEntity<ID extends Serializable> extends AuditableEntity<ID> {
 
     @CreatedDate
-    @Column("created_date")
+    @Column(name = "created_date")
     private LocalDateTime createdDate;
 
     @CreatedBy
-    @Column("created_by")
+    @Column(name = "created_by")
     private String createdBy;
 
     @LastModifiedDate
-    @Column("updated_date")
+    @Column(name = "updated_date")
     private LocalDateTime updatedDate;
 
     @LastModifiedBy
-    @Column("updated_by")
+    @Column(name = "updated_by")
     private String updatedBy;
 
     public AuditableWithAuthorEntity() {

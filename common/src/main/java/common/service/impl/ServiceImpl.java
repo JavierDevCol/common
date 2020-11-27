@@ -25,7 +25,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static common.util.UtilJavaReflection.pasarEntityToMaps;
+
 
 public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>, ID extends Serializable>
         implements Service<D, ID> {
@@ -72,7 +72,7 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
         else if (isMerged()) {
             E entityDb = this.getDao().findById(domainBean.getId()).orElse(null);
         }
-        pasarEntityToMaps(entity);
+
         this.getDao().save(entity);
         return entity.getId();
     }
@@ -94,7 +94,7 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
             else if (isMerged()) {
                 E entityDb = this.getDao().findById(d.getId()).orElse(null);
             }
-            pasarEntityToMaps(entity);
+
             entities.add(entity);
         });
         Iterable<E> entitiesSaved = getDao().saveAll(entities);
@@ -115,7 +115,6 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
         if (isMerged()) {
             E entityBd = this.getDao().findById(domainBean.getId()).orElse(null);
         }
-        pasarEntityToMaps(entity);
         this.getDao().save(entity);
     }
 
@@ -135,7 +134,6 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
             else if (isMerged()) {
                 E entityDb = this.getDao().findById(d.getId()).orElse(null);
             }
-            pasarEntityToMaps(entity);
             entities.add(entity);
         });
         getDao().saveAll(entities);
@@ -157,7 +155,6 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
             else if (isMerged()) {
                 E entityDb = this.getDao().findById(d.getId()).orElse(null);
             }
-            pasarEntityToMaps(entity);
             entities.add(entity);
         });
         Iterable<E> entitiesSaved = getDao().saveAll(entities);
@@ -179,7 +176,6 @@ public abstract class ServiceImpl<D extends DomainBean<ID>, E extends Entity<ID>
         if (isMerged()) {
             E entityDb = this.getDao().findById(domainBean.getId()).orElse(null);
         }
-        pasarEntityToMaps(entity);
         this.getDao().save(entity);
     }
 

@@ -22,22 +22,7 @@ public class HttpRequestContextFilterImpl implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) {
-        HttpServletRequestWrapper wrapper = new HttpServletRequestWrapper((HttpServletRequest) request);
-        String usuario = wrapper.getHeader("usuario");
-        String cliente = wrapper.getHeader("cliente_id");
         try {
-            if (StringUtils.isEmpty(usuario)) {
-                HttpRequestContextHolder.setUsuario(null);
-            }
-            else {
-                HttpRequestContextHolder.setUsuario(usuario);
-            }
-            if (StringUtils.isEmpty(cliente)) {
-                HttpRequestContextHolder.setCliente(null);
-            }
-            else {
-                HttpRequestContextHolder.setCliente(cliente);
-            }
             request = new HttpRquestBody((HttpServletRequest) request);
             chain.doFilter(request, response);
         }
