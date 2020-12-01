@@ -18,7 +18,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 
-public abstract class ControllerImpl<D extends DomainBean<ID>, ID extends Serializable> {
+public abstract class ControllerWithFilterImpl<D extends DomainBean<ID>, ID extends Serializable, T extends Filter> {
 
     @PostMapping
     @ResponseBody
@@ -57,6 +57,11 @@ public abstract class ControllerImpl<D extends DomainBean<ID>, ID extends Serial
     @ResponseBody
     public D findById(@NotNull @PathVariable ID id) {
         return getService().findById(id);
+    }
+
+    @GetMapping
+    public ListResponse<D> findAll(T filter) {
+        return new ListResponse<D>(getService().findAll());
     }
 
     public abstract Service<D, ID> getService();
